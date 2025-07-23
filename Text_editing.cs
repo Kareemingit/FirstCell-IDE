@@ -14,9 +14,6 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace FirstCell 
 {
-    // ==========================
-    // File: SyntaxHighlighter.cs
-    // ==========================
 
     public class SyntaxHighlighter
     {
@@ -32,7 +29,6 @@ namespace FirstCell
         private readonly Regex _cssCommentRegex = new(@"/\*.*?\*/", RegexOptions.Singleline);
 
         private readonly Regex _jsKeywordRegex = new(@"\b(function|var|let|const|if|else|return|for|while|class|new|this)\b");
-        private readonly Regex _jsVarRegex = new(@"\b[a-zA-Z_][a-zA-Z0-9_]*\b");
         private readonly Regex _jsNumberRegex = new(@"\b\d+(\.\d+)?\b");
         private readonly Regex _jsCommentRegex = new(@"//.*?$|/\*.*?\*/", RegexOptions.Singleline | RegexOptions.Multiline);
         private readonly Regex _jsFunctionCallRegex = new(@"\b[a-zA-Z_][a-zA-Z0-9_]*\s*(?=\()\b");
@@ -45,7 +41,6 @@ namespace FirstCell
                     HighlightParagraph(paragraph, extension);
             }
         }
-
         private void HighlightChangedParagraph(RichTextBox editor)
         {
             editor.TextChanged -= Editor_TextChanged;
@@ -188,10 +183,6 @@ namespace FirstCell
             return null;
         }
     }
-
-    // ==========================
-    // File: AutoCompleter.cs
-    // ==========================
 
 
     public class AutoCompleter

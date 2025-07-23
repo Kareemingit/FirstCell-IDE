@@ -113,7 +113,6 @@ namespace FirstCell
                 if (socket.State == WebSocketState.Open)
                     await socket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Text, true, CancellationToken.None);
             }
-            
         }
     }
 
@@ -148,48 +147,37 @@ namespace FirstCell
 
     public class FileWatcher
     {
-        public FileSystemWatcher watcher;
-        private readonly LiveReloadServer liveReloadServer;
-        private CancellationTokenSource? debounceTokenSource;
-        private readonly TimeSpan debounceTime = TimeSpan.FromMilliseconds(800);
-        private readonly DebounceDispatcher debounce = new();
-        public FileWatcher(string projectpath, LiveReloadServer liveReloadServer)
+        private FileSystemWatcher watcher;
+        private string projectpath;
+        private LiveReloadServer liveReloadServer;
+        public FileWatcher(string projectPath, LiveReloadServer liveReloadServer)
         {
             this.liveReloadServer = liveReloadServer;
-            watcher = new FileSystemWatcher(projectpath)
+
+            watcher = new FileSystemWatcher(projectPath)
             {
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
                 IncludeSubdirectories = true,
-                EnableRaisingEvents = true
+                EnableRaisingEvents = true,
+                Filter = "*.*"
             };
+
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                             | NotifyFilters.CreationTime
+                             | NotifyFilters.DirectoryName
+                             | NotifyFilters.FileName
+                             | NotifyFilters.LastAccess
+                             | NotifyFilters.LastWrite
+                             | NotifyFilters.Security
+                             | NotifyFilters.Size;
+
             watcher.Changed += OnChanged;
         }
-        private void OnChanged(object sender, FileSystemEventArgs e)
+
+        private async void OnChanged(object sender, FileSystemEventArgs e)
         {
-            debounce.Debounce(500, async () => await liveReloadServer.ReloadClientsAsync());
-        }
-    }
+            if (e.ChangeType != WatcherChangeTypes.Changed) return;
 
-    public class DebounceDispatcher
-    {
-        private CancellationTokenSource? _cts;
-
-        public void Debounce(int milliseconds, Func<Task> action)
-        {
-            _cts?.Cancel();
-            _cts = new CancellationTokenSource();
-            var token = _cts.Token;
-
-            Task.Run(async () =>
-            {
-                try
-                {
-                    await Task.Delay(milliseconds, token);
-                    if (!token.IsCancellationRequested)
-                        await action();
-                }
-                catch (TaskCanceledException) { }
-            }, token);
+            MessageBox.Show($"File {e.Name} Changed");
         }
     }
 }

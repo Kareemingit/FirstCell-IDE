@@ -12,7 +12,7 @@ namespace FirstCell
     public interface IFileManager
     {
         Task LoadAsync(string path);
-        void SaveAsync();
+        Task SaveAsync();
         Task CreateAsync();
         void Add(File file);
     }
@@ -22,7 +22,7 @@ namespace FirstCell
         public string Name { get; set; }
         public string Path { get; set; }
         public string Extension { get; set; }
-        public TabItem? CodeBlock { get; set; }
+        public TabItem? CodeBlock { get; set; } // Connected to UI
 
         protected File(string path)
         {
@@ -35,9 +35,10 @@ namespace FirstCell
         {
             if (!System.IO.File.Exists(Path)) return;
             string content = await System.IO.File.ReadAllTextAsync(Path);
+            // Set RichTextBox content later via orchestrator/UI
         }
 
-        public virtual async void SaveAsync()
+        public virtual async Task SaveAsync()
         {
             var textBox = CodeBlock?.Content as RichTextBox;
             if (textBox != null)
@@ -53,7 +54,7 @@ namespace FirstCell
             return Task.CompletedTask;
         }
 
-        public virtual void Add() { }
+        public virtual void Add() { } //no need on base
     }
 
 
@@ -89,13 +90,9 @@ namespace FirstCell
             }
         }
 
-        public async void SaveAsync()
-        {
-            foreach (var file in Files)
-                file.SaveAsync();
-        }
+        public Task SaveAsync() => Task.WhenAll(Files.Select(f => f.SaveAsync()));
 
-        public Task CreateAsync() => Task.CompletedTask;
+        public Task CreateAsync() => Task.CompletedTask; // Project created on folder selection
 
         public void Add(File file) => Files.Add(file);
     }

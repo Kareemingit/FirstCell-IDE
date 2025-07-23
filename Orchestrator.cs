@@ -19,8 +19,8 @@ namespace FirstCell
         private LiveReloadServer? _liveServer;
         public List<Project> Projects { get; private set; } = new();
         public Project? CurrentProject => Projects.LastOrDefault();
-        private FileWatcher _watcher;
         public bool isAutoSaveEnable;
+        private FileWatcher _fileWatcher;
         public Orchestrator(TabControl tabControl)
         {
             _tabControl = tabControl;
@@ -39,12 +39,12 @@ namespace FirstCell
                 await OpenFileAsync(file, newProject);
         }
 
-        public async Task StartLiveServerAsync(string projectPath , string fileName)
+        public async Task StartLiveServerAsync(string projectPath, string fileName)
         {
             _liveServer?.Stop();
             _liveServer = new LiveReloadServer(projectPath);
             await _liveServer.StartAsync();
-            string fileContent = System.IO.File.ReadAllText(projectPath +"\\" + fileName);
+            string fileContent = System.IO.File.ReadAllText(projectPath + "\\" + fileName);
             string newCode = LiveReloadInjector.Inject(fileContent);
             System.IO.File.WriteAllText(projectPath + "\\" + fileName, newCode);
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
@@ -52,7 +52,6 @@ namespace FirstCell
                 FileName = "http://localhost:8080/" + fileName,
                 UseShellExecute = true
             });
-            _watcher = new FileWatcher(projectPath , _liveServer);
         }
 
         public async Task OpenFileAsync(File file, Project project)
@@ -93,12 +92,12 @@ namespace FirstCell
             }
 
         }
-        private void AutoSave(object sender, TextChangedEventArgs e)
+        private async void AutoSave(object sender, TextChangedEventArgs e)
         {
-            if(isAutoSaveEnable && sender is RichTextBox textBox)
+            if (isAutoSaveEnable && sender is RichTextBox textBox)
             {
                 if (textBox.Tag is File file)
-                    file.SaveAsync();
+                    await file.SaveAsync();
             }
         }
         public async Task ShutdownAsync()
@@ -107,13 +106,11 @@ namespace FirstCell
             {
                 foreach (var file in CurrentProject.Files.Where(f => f.Extension == ".html"))
                     LiveReloadInjector.RemoveFromFile(file.Path);
+                await CurrentProject.SaveAsync();
             }
             _liveServer?.Stop();
 
         }
-
     }
-
-
-
 }
+
