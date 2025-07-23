@@ -52,6 +52,7 @@ namespace FirstCell
                 FileName = "http://localhost:8080/" + fileName,
                 UseShellExecute = true
             });
+            _fileWatcher = new FileWatcher(projectPath, _liveServer);
         }
 
         public async Task OpenFileAsync(File file, Project project)
@@ -113,4 +114,3 @@ namespace FirstCell
         }
     }
 }
-

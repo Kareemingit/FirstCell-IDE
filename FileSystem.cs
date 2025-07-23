@@ -16,6 +16,21 @@ namespace FirstCell
         Task CreateAsync();
         void Add(File file);
     }
+    public static class FileAccessLock
+    {
+        private static readonly Dictionary<string, SemaphoreSlim> _locks = new();
+
+        public static SemaphoreSlim GetLock(string path)
+        {
+            lock (_locks)
+            {
+                if (!_locks.ContainsKey(path))
+                    _locks[path] = new SemaphoreSlim(1, 1);
+                return _locks[path];
+            }
+        }
+    }
+
 
     public abstract class File
     {
@@ -40,11 +55,26 @@ namespace FirstCell
 
         public virtual async Task SaveAsync()
         {
-            var textBox = CodeBlock?.Content as RichTextBox;
-            if (textBox != null)
+            //var textBox = CodeBlock?.Content as RichTextBox;
+            //if (textBox != null)
+            //{
+            //    var range = new TextRange(textBox.Document.ContentStart, textBox.Document.ContentEnd);
+            //    await System.IO.File.WriteAllTextAsync(Path, range.Text);
+            //}
+            var fileLock = FileAccessLock.GetLock(Path);
+            await fileLock.WaitAsync();
+            try
             {
-                var range = new TextRange(textBox.Document.ContentStart, textBox.Document.ContentEnd);
-                await System.IO.File.WriteAllTextAsync(Path, range.Text);
+                var textBox = CodeBlock?.Content as RichTextBox;
+                if (textBox != null)
+                {
+                    var range = new TextRange(textBox.Document.ContentStart, textBox.Document.ContentEnd);
+                    await System.IO.File.WriteAllTextAsync(Path, range.Text);
+                }
+            }
+            finally
+            {
+                fileLock.Release();
             }
         }
 
@@ -92,7 +122,7 @@ namespace FirstCell
 
         public Task SaveAsync() => Task.WhenAll(Files.Select(f => f.SaveAsync()));
 
-        public Task CreateAsync() => Task.CompletedTask; // Project created on folder selection
+        public Task CreateAsync() => Task.CompletedTask;
 
         public void Add(File file) => Files.Add(file);
     }

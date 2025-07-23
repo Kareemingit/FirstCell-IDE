@@ -1,12 +1,13 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 using System.Windows;
+using System.Windows.Shapes;
 
 namespace FirstCell
 {
@@ -68,19 +69,34 @@ namespace FirstCell
                                  filePath.EndsWith(".js") ? "application/javascript" :
                                  filePath.EndsWith(".css") ? "text/css" : "application/octet-stream";
 
-            byte[] content = System.IO.File.ReadAllBytes(filePath);
-
+            byte[] content;
             if (filePath.EndsWith(".html"))
             {
                 lastHtmlContext = context;
-                string html = System.IO.File.ReadAllText(filePath);
+
+                string html;
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var reader = new StreamReader(fs, Encoding.UTF8))
+                {
+                    html = await reader.ReadToEndAsync();
+                }
+
                 if (!html.Contains("__livereload"))
                 {
                     html = LiveReloadInjector.Inject(html);
-                    content = Encoding.UTF8.GetBytes(html);
+                    
+                }
+                content = Encoding.UTF8.GetBytes(html);
+            }
+            else
+            {
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (var ms = new MemoryStream())
+                {
+                    await fs.CopyToAsync(ms);
+                    content = ms.ToArray();
                 }
             }
-
             context.Response.ContentType = contentType;
             context.Response.ContentLength64 = content.Length;
             await context.Response.OutputStream.WriteAsync(content, 0, content.Length);
@@ -107,6 +123,8 @@ namespace FirstCell
 
         public async Task ReloadClientsAsync()
         {
+            
+
             var message = Encoding.UTF8.GetBytes("reload");
             foreach (var socket in connectedSockets)
             {
@@ -161,23 +179,51 @@ namespace FirstCell
                 Filter = "*.*"
             };
 
-            watcher.NotifyFilter = NotifyFilters.Attributes
-                             | NotifyFilters.CreationTime
-                             | NotifyFilters.DirectoryName
-                             | NotifyFilters.FileName
-                             | NotifyFilters.LastAccess
-                             | NotifyFilters.LastWrite
-                             | NotifyFilters.Security
-                             | NotifyFilters.Size;
+            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
 
             watcher.Changed += OnChanged;
         }
 
+        private readonly Dictionary<string, DateTime> _lastChanged = new();
+
         private async void OnChanged(object sender, FileSystemEventArgs e)
         {
-            if (e.ChangeType != WatcherChangeTypes.Changed) return;
+            var now = DateTime.Now;
 
-            MessageBox.Show($"File {e.Name} Changed");
+            if (_lastChanged.TryGetValue(e.FullPath, out DateTime lastTime))
+            {
+                if ((now - lastTime).TotalMilliseconds < 500)
+                    return;
+            }
+
+            _lastChanged[e.FullPath] = now;
+
+            await Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (IsFileReady(e.FullPath))
+                    {
+                        await liveReloadServer.ReloadClientsAsync();
+                        break;
+                    }
+                    await Task.Delay(100);
+                }
+            });
         }
+
+        private bool IsFileReady(string path)
+        {
+            try
+            {
+                using var stream = System.IO.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }
