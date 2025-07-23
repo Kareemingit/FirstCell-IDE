@@ -1,0 +1,40 @@
+﻿<Window x:Class="FirstCell.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FirstCell"
+        mc:Ignorable="d"
+        Title="FirstCell IDE" Height="400" Width="800">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="#333" Foreground="White">
+            <MenuItem Header="File">
+                <MenuItem Header="Open Project" Click="OpenProject_Click" Foreground="Black"/>
+                <MenuItem Header="Save All" Click="SaveAll_Click" Foreground="Black"/>
+                <Separator />
+                <MenuItem Header="Auto Save" 
+                        IsCheckable="True" 
+                        IsChecked="{Binding IsAutoSaveEnabled, Mode=TwoWay}" 
+                        Click="AutoSaveToggle_Click" 
+                        Foreground="Black"/>
+            </MenuItem>
+        </Menu>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Project Switcher -->
+            <TreeView x:Name="ProjectList" 
+                      Grid.Column="0" 
+                      SelectedItemChanged="ProjectList_SelectedItemChanged"
+                      Background="#333333" Foreground="White"/>
+
+            <!-- Code Tabs -->
+            <TabControl x:Name="MainTabControl" Grid.Column="1" Background="Gray"/>
+        </Grid>
+
+    </DockPanel>
+</Window>
