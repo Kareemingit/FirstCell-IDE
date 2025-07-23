@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows;
 
 namespace FirstCell
 {
@@ -112,6 +113,7 @@ namespace FirstCell
                 if (socket.State == WebSocketState.Open)
                     await socket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Text, true, CancellationToken.None);
             }
+            
         }
     }
 
@@ -146,7 +148,48 @@ namespace FirstCell
 
     public class FileWatcher
     {
-        private FileSystemWatcher watcher;
-        private string projectpath;
+        public FileSystemWatcher watcher;
+        private readonly LiveReloadServer liveReloadServer;
+        private CancellationTokenSource? debounceTokenSource;
+        private readonly TimeSpan debounceTime = TimeSpan.FromMilliseconds(800);
+        private readonly DebounceDispatcher debounce = new();
+        public FileWatcher(string projectpath, LiveReloadServer liveReloadServer)
+        {
+            this.liveReloadServer = liveReloadServer;
+            watcher = new FileSystemWatcher(projectpath)
+            {
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
+                IncludeSubdirectories = true,
+                EnableRaisingEvents = true
+            };
+            watcher.Changed += OnChanged;
+        }
+        private void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            debounce.Debounce(500, async () => await liveReloadServer.ReloadClientsAsync());
+        }
+    }
+
+    public class DebounceDispatcher
+    {
+        private CancellationTokenSource? _cts;
+
+        public void Debounce(int milliseconds, Func<Task> action)
+        {
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+            var token = _cts.Token;
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await Task.Delay(milliseconds, token);
+                    if (!token.IsCancellationRequested)
+                        await action();
+                }
+                catch (TaskCanceledException) { }
+            }, token);
+        }
     }
 }

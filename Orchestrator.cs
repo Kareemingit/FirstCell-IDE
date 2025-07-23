@@ -19,6 +19,7 @@ namespace FirstCell
         private LiveReloadServer? _liveServer;
         public List<Project> Projects { get; private set; } = new();
         public Project? CurrentProject => Projects.LastOrDefault();
+        private FileWatcher _watcher;
         public bool isAutoSaveEnable;
         public Orchestrator(TabControl tabControl)
         {
@@ -51,6 +52,7 @@ namespace FirstCell
                 FileName = "http://localhost:8080/" + fileName,
                 UseShellExecute = true
             });
+            _watcher = new FileWatcher(projectPath , _liveServer);
         }
 
         public async Task OpenFileAsync(File file, Project project)
@@ -91,12 +93,12 @@ namespace FirstCell
             }
 
         }
-        private async void AutoSave(object sender, TextChangedEventArgs e)
+        private void AutoSave(object sender, TextChangedEventArgs e)
         {
             if(isAutoSaveEnable && sender is RichTextBox textBox)
             {
                 if (textBox.Tag is File file)
-                    await file.SaveAsync();
+                    file.SaveAsync();
             }
         }
         public async Task ShutdownAsync()
@@ -105,7 +107,6 @@ namespace FirstCell
             {
                 foreach (var file in CurrentProject.Files.Where(f => f.Extension == ".html"))
                     LiveReloadInjector.RemoveFromFile(file.Path);
-                await CurrentProject.SaveAsync();
             }
             _liveServer?.Stop();
 

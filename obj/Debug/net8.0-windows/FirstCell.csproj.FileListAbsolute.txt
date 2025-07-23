@@ -1,0 +1,26 @@
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.csproj.AssemblyReference.cache
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\Input Dialog\InputDialog.g.cs
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\MainWindow.g.cs
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\App.g.cs
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell_MarkupCompile.cache
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell_MarkupCompile.lref
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\FirstCell.exe
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\FirstCell.deps.json
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\FirstCell.runtimeconfig.json
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\FirstCell.dll
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\FirstCell.pdb
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\Microsoft.WindowsAPICodePack.dll
+D:\01 Kareem\programing projects\FirstCell\FirstCell\bin\Debug\net8.0-windows\Microsoft.WindowsAPICodePack.Shell.dll
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\Input Dialog\InputDialog.baml
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\MainWindow.baml
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.g.resources
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.GeneratedMSBuildEditorConfig.editorconfig
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.AssemblyInfoInputs.cache
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.AssemblyInfo.cs
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.csproj.CoreCompileInputs.cache
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.csproj.Up2Date
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.dll
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\refint\FirstCell.dll
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.pdb
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\FirstCell.genruntimeconfig.cache
+D:\01 Kareem\programing projects\FirstCell\FirstCell\obj\Debug\net8.0-windows\ref\FirstCell.dll

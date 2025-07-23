@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "QIEVYKORLV4=",
+  "success": true,
+  "projectFilePath": "D:\\01 Kareem\\programing projects\\FirstCell\\FirstCell\\FirstCell.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Hp\\.nuget\\packages\\microsoft-windowsapicodepack-core\\1.1.5\\microsoft-windowsapicodepack-core.1.1.5.nupkg.sha512",
+    "C:\\Users\\Hp\\.nuget\\packages\\microsoft-windowsapicodepack-shell\\1.1.5\\microsoft-windowsapicodepack-shell.1.1.5.nupkg.sha512"
+  ],
+  "logs": []
+}

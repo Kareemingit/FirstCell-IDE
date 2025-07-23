@@ -60,7 +60,7 @@ namespace FirstCell
         }
         public void Editor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            HighlightChangedParagraph(sender as RichTextBox);
+                HighlightChangedParagraph(sender as RichTextBox);
         }
         private string GetFileExtensionFromTab(RichTextBox editor)
         {
@@ -105,13 +105,9 @@ namespace FirstCell
 
                 foreach (Match match in _cssCommentRegex.Matches(text))
                     ApplyColor(paragraph, match.Index, match.Length, Brushes.Green);
-                
             }
             else if (extension == ".js")
             {
-                foreach (Match match in _jsCommentRegex.Matches(text))
-                    ApplyColor(paragraph, match.Index, match.Length, Brushes.Green);
-
                 foreach (Match match in _jsNumberRegex.Matches(text))
                     ApplyColor(paragraph, match.Index, match.Length, Brushes.DarkOrange);
 
@@ -120,6 +116,9 @@ namespace FirstCell
 
                 foreach (Match match in _jsKeywordRegex.Matches(text))
                     ApplyColor(paragraph, match.Index, match.Length, Brushes.Blue);
+
+                foreach (Match match in _jsCommentRegex.Matches(text))
+                    ApplyColor(paragraph, match.Index, match.Length, Brushes.Green);
             }
         }
 

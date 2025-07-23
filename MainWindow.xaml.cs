@@ -48,10 +48,7 @@ namespace FirstCell
         private void AutoSaveToggle_Click(object sender, RoutedEventArgs e)
         {
             IsAutoSaveEnabled = !IsAutoSaveEnabled;
-            if (IsAutoSaveEnabled)
-                _orchestrator.isAutoSaveEnable = true;
-            else
-                _orchestrator.isAutoSaveEnable = false;
+            _orchestrator.isAutoSaveEnable = IsAutoSaveEnabled;
         }
         private async void OpenProject_Click(object sender, RoutedEventArgs e)
         {
@@ -125,7 +122,7 @@ namespace FirstCell
         private async void SaveAll_Click(object sender, RoutedEventArgs e)
         {
             if (_orchestrator.CurrentProject != null)
-                await _orchestrator.CurrentProject.SaveAsync();
+                 _orchestrator.CurrentProject.SaveAsync();
         }
 
         private async void ProjectList_SelectionChanged(object sender, SelectionChangedEventArgs e)
